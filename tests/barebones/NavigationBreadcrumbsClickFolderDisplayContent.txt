@@ -1,0 +1,31 @@
+*** Settings ***
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/BreadcrumbsNavigatorSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Images  Files with XMP
+
+*** Test Cases ***
+XNT-29
+    [Documentation]  XNT-29: Verify that when clicking in a folder link in breadcrumbs the folder content
+    ...              is loaded in the folder content pane
+    [Tags]  BVT  DB  BareBones  Navigation  Marquee  Exhibit
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  @{folder path}[3]
+
+    # Click the one before last link from the breadcrumbs
+    Click folder link in breadcrumbs  @{folder path}[2]
+
+    Verify if folder content is displayed in folder content  ${folder path}  @{folder path}[2]
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Collapse folder in side pane  @{folder path}[0]

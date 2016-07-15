@@ -1,0 +1,53 @@
+*** Settings ***
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Audio
+
+*** Test Cases ***
+XNT-39 XNT-40
+    [Documentation]  XNT-39: Verify that it is possible to display the images split in several pages
+    ...              (The folder should contain at least 2 elements)
+    ...
+    ...              XNT-40: Verify that after click a link number page, the page is redirected and
+    ...              displayed the selected one
+    
+    [Tags]  BVT  BareBones  Navigation  Exhibit
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Click folder link by path in side pane  ${folder path}
+
+    Select short view mode in toolbar
+
+    Select images quantity in toolbar  1
+
+    Verify if page list section is displayed in folder content
+
+    # Verify that only one element is displayed
+    Verify if quantity of elements is displayed  1  Short View
+        
+    # Verify that the first page number is not displayed as link
+    Verify if link is not displayed in page list section  1
+    
+    # Verify that the second page number is displayed as link
+    Verify if link is displayed in page list section  2
+    
+    Click link in page list section  2
+    
+    # Verify that the first page number is displayed as link
+    Verify if link is displayed in page list section  1
+    
+    # Verify that the second page number is not displayed as link
+    Verify if link is not displayed in page list section  2
+    
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Select images quantity in toolbar  25
+
+    ...         AND  Collapse folder in side pane  @{folder path}[0]

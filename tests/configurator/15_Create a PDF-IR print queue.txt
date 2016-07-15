@@ -1,0 +1,30 @@
+*** Settings ***
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativePrintHotFolderSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+${template_name}  wnv_tmpl
+${permission_set_name}  wnv_perm
+${queue_name}  PDFImage
+
+*** Test Cases ***
+XNT-14
+    [Documentation]  XNT-14: Create a PDF-IR print queue
+    
+    [Tags]  Configurator
+    
+    Click print hot folder
+    
+    Click print queues link
+    
+    #Verify if the queue is already created
+    ${queue already created}  Is pdf ir queue displayed  ${queue_name}
+    
+    Add new pdf ir queue  ${SERVER_NAME}  ${queue_name}  PDF File  PDF Image Replacement
+    
+    #Verify if the queue was created correctly
+    Run Keyword unless  ${queue already created}  Verify if pdf ir queue displayed  ${queue_name}
+    
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}

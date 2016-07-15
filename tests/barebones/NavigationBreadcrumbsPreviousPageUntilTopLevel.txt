@@ -1,0 +1,46 @@
+*** Settings ***
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/BreadcrumbsNavigatorSteps.py
+Library  Collections
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Images
+${previous folder name} =  Something
+
+*** Test Cases ***
+XNT-27 XNT-28
+    [Documentation]  XNT-27: Verify that when clicking in a folder link in breadcrumbs the folder name is selected
+    ...              in side pane
+    ...
+    ...              XNT-28: Verify that when clicking in a folder link in breadcrumbs the folder names after
+    ...              the selected are removed from breadcrumbs
+    [Tags]  BareBones  Navigation  Marquee  Exhibit
+
+    # Get the number of folders to navigate
+    ${folder list size} =  Get Length  ${folder path}
+
+    ${start} =  Evaluate  ${folder list size}-1
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  @{folder path}[2]
+
+    # Do for all the links in the breadcrumbs starting from the last
+    :FOR  ${index}  IN RANGE  ${start}  -1  -1
+    \   ${folder name} =  Get From List  ${folder path}  ${index}
+
+    # Click the last link from the breadcrumbs
+    \   Click folder link in breadcrumbs  ${folder name}
+
+    # Verify that the folder name after the selected is removed from breadcrumb
+    \   Verify if folder link is not displayed in breadcrumbs  ${previous folder name}
+    
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Collapse folder in side pane  @{folder path}[0]

@@ -1,0 +1,27 @@
+*** Settings ***
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativeVolumesUsersSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{mpeg4 resolution} =  MPEG4  QuickTime - MPEG4 Part 2 (.mov)  480 x 272 (16:9)  High  1
+@{wnv resolution} =  WNV  Windows Media - WMV2 (.wmv)  160 x 90 (16:9)  Medium  2
+@{flv resolution} =  FLV  Flash - FLV (.flv)  320 x 180 (16:9)  High  3
+@{ogg resolution} =  OGG  Ogg Vorbis - Vorbis (.ogg)  480 x 272 (16:9)  Low  4
+
+@{resolution_list} =  ${mpeg4 resolution}  ${wnv resolution}  ${flv resolution}  ${ogg resolution}
+${object_name} =  Smooth shaded with wireframe overlay
+${video_name} =  Smooth shaded with wireframe overlay
+
+*** Test Cases ***
+XNT-5
+    [Documentation]  XNT-5: Configure video resolution values
+    
+    [Tags]  Configurator
+
+    Click volumes users link
+    
+    Configure video resolution  ${SERVER_NAME}_no_fpo  ${resolution_list}  ${object_name}  ${video_name}
+    
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}

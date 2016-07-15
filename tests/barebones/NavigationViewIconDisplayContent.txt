@@ -1,0 +1,42 @@
+*** Settings ***
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Images
+
+*** Test Cases ***
+XNT-30 XNT-31 XNT-32
+    [Documentation]  XNT-30: Verify that after select the 'Icon View' the folder content is displayed
+    ...              in folder content pane as icon previews
+    ...
+    ...              XNT-31: Verify that after select the 'Icon View' the file actions are not displayed
+    ...              for the icon previews
+    ...
+    ...              XNT-32: Verify that after select the 'Icon View' the metadata info is not displayed
+    ...              for the icon previews
+    [Tags]  BVT  BareBones  Navigation  Exhibit
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  @{folder path}[2]
+
+#    Click folder link by path in side pane  ${folder path}
+
+    Select icon view mode in toolbar
+
+    Verify if icon view is applied in folder content
+
+    Verify if file actions section is not displayed under folder in folder content
+
+    Verify if file metadata section is not displayed under folder in folder content
+    
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Collapse folder in side pane  @{folder path}[0]

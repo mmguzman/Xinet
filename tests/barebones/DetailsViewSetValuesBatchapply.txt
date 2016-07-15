@@ -1,0 +1,127 @@
+*** Settings ***
+Library  ../../tests/steps/BasketSteps.py
+Library  ../../tests/steps/BreadcrumbsNavigatorSteps.py
+Library  ../../tests/steps/BasicToolsToolbarSteps.py
+Library  ../../tests/steps/FileContentModalSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Library  ../../tests/steps/SidePaneFiltersSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  InDesign Job
+#it refers to the 'Abercrombie&Kent' file
+${folder name}  Abercrombie
+${file name}  abercrombie&kent_CC.indd
+
+# 1. Set metadata values in the batchapply (Collection)
+@{wnv_text} =  wnv_text  five_text  Replace
+@{wnv_text_popup} =  wnv_text_popup  kiwi
+@{wnv_text_xmp} =  wnv_text_xmp  five_text_xmp  Replace
+@{wnv_int} =  wnv_int  5  Set Equal To
+@{wnv_float} =  wnv_float  5.5  Set Equal To
+@{wnv_date} =  wnv_date  ${wnv_date_values}
+@{wnv_date_values}  December  21  2012
+@{wnv_bool} =  wnv_bool  ${true}
+@{data_field_list} =  ${wnv_text}  ${wnv_text_popup}  ${wnv_text_xmp}
+...                   ${wnv_int}  ${wnv_float}  ${wnv_bool}  ${wnv_date}
+
+# 2. MD values entered in the batchapply to verify in Details View.
+@{folder path detailsview} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  InDesign Job
+@{wnv_text detailsview} =  wnv_text  five_text
+@{wnv_text_popup detailsview} =  wnv_text_popup  kiwi
+@{wnv_text_xmp detailsview} =  wnv_text_xmp  five_text_xmp
+@{wnv_int detailsview} =  wnv_int  5
+@{wnv_float detailsview} =  wnv_float  5.50
+@{wnv_date detailsview} =  wnv_date  ${wnv_date_values detailsview}
+@{wnv_date_values detailsview}  December  21  2012
+@{wnv_bool detailsview} =  wnv_bool  1
+@{data_field_list_to_verify_in_detailsview} =  ${wnv_text detailsview}  ${wnv_text_popup detailsview}  ${wnv_text_xmp detailsview}
+...                             ${wnv_int detailsview}  ${wnv_float detailsview}  ${wnv_bool detailsview}
+...                             ${wnv_date detailsview}
+
+# 3. 'Teardown': MD values to set by default:
+@{wnv_text_default} =  wnv_text  ${EMPTY}  Replace
+@{wnv_text_popup_default} =  wnv_text_popup  ${EMPTY}
+@{wnv_text_xmp_default} =  wnv_text_xmp  ${EMPTY}  Replace
+@{wnv_int_default} =  wnv_int  ${EMPTY}  Set Equal To
+@{wnv_float_default} =  wnv_float  ${EMPTY}  Set Equal To
+@{wnv_date_default} =  wnv_date  ${wnv_date_values_default}
+@{wnv_date_values_default}  ${EMPTY}  ${EMPTY}  ${EMPTY}
+@{wnv_bool_default} =  wnv_bool  ${false}
+@{default_data_field_list_values} =  ${wnv_text_default}  ${wnv_text_popup_default}  ${wnv_text_xmp_default}
+...                   ${wnv_int_default}  ${wnv_float_default}  ${wnv_bool_default}  ${wnv_date_default}
+
+*** Test Cases ***
+XNT-68
+    [Documentation]  XNT-68:Verify if metadata values entered in batchapply are set in Details View.
+
+    [Tags]  BVT  BareBones   DetailsView  Marquee  Exhibit
+    
+    # Preconditions: Set metadata values in the batchapply (Collection section -XNT-53)
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Collapse folder in side pane  @{folder path}[0]
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  @{folder path}[2]
+
+    Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+    ...  Select list view mode in toolbar
+
+    ...  ELSE
+
+    ...  Select short view mode in toolbar
+
+    Click add to basket icon  ${folder name}
+
+    Click basket button
+
+    Click batch keyword apply link
+
+    Apply keyword to fields list  ${data_field_list}
+
+    Click apply keywords button
+
+    Close apply keyword modal
+
+    Back To Home
+
+    # TC: Verify if MD values entered in the batchapply are displayed in Details View.
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Collapse folder in side pane  @{folder path}[0]
+
+    Expand folder by path in side pane  ${folder path detailsview}
+
+    Click folder link in side pane  ${folder name}
+
+    Click view file  ${file name}
+
+    Click metadata tab
+
+    Verify if metadata values are displayed in file content modal  ${data_field_list_to_verify_in_detailsview}
+    
+    Run Keyword If  '${template}' == 'marquee'
+    
+    ...  Click close file content modal
+
+    ...  ELSE
+
+    ...  Click folder link in breadcrumbs  ${folder name}
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Click folder link in side pane  @{folder path}[2]
+
+    ...         AND  Click basket button
+
+    ...         AND  Set metadata default values  ${default_data_field_list_values}
+
+    ...         AND  Back To Home

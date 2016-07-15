@@ -1,0 +1,25 @@
+*** Settings ***
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativeVolumesUsersSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Test Cases ***
+XNT-6
+    [Documentation]  XNT-6: Make a 'wnv' testing user
+    
+    [Tags]  Configurator
+
+    Click volumes users link
+    
+    Click users link
+    
+    #Verify if the user item is already created
+    ${user already created}  Is item displayed in combo  ${XINET_USER}
+    
+    Add new user  ${XINET_USER}  ${XINET_PASSWORD}
+    
+    #Verify if the user was created correctly
+    Run Keyword unless  ${user already created}  Verify message displayed  User ${XINET_USER} successfully added
+
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}

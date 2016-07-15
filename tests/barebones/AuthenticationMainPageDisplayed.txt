@@ -1,0 +1,24 @@
+*** Settings ***
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/BasicToolsToolbarSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/BreadcrumbsNavigatorSteps.py
+Library  ../../tests/steps/LoginSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Test Cases ***
+XNT-45
+    [Documentation]  XNT-45: Verify that the main page is displayed when logging as wnv
+    [Tags]  BareBones  Authentication  Marquee  Exhibit
+
+    Click logout link
+
+    Login to portal  ${PORTAL_IP}  ${SERVER_IP}  ${XINET_USER}  ${XINET_PASSWORD}
+
+    Verify if volume is_displayed  ${SERVER_NAME}_wnv
+
+    Verify if volume is_displayed  ${SERVER_NAME}_no_fpo
+
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}

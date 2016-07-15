@@ -1,0 +1,53 @@
+*** Settings ***
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Images
+@{actions list marquee} =  Download Options  Show Details  Show Annotations  Add to collection  Image Order
+@{actions list exhibit} =  Download High-Res  Manage Files  Custom Order  Add to collection  Show Annotations
+@{metadata list} =  Created on  Last modified  Last accessed
+
+*** Test Cases ***
+XNT-36 XNT-37 XNT-38
+    [Documentation]  XNT-36: Verify that after select the 'Long View' the folder content is displayed
+    ...              in folder content pane in long previews
+    ...
+    ...              XNT-37: Verify that after select the 'Long View' the file actions are displayed
+    ...              for the long previews
+    ...
+    ...              XNT-38: Verify that after select the 'Long View' the metadata info is displayed
+    ...              for the long previews
+    [Tags]  BVT  BareBones  Navigation  Marquee  Exhibit
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  @{folder path}[2]
+
+    Run Keyword If  '${TEMPLATE}' == 'marquee'
+    
+    ...  Run Keywords  Select list view mode in toolbar
+    
+    ...  AND  Verify if list view is applied in folder content
+    
+    ...  AND  Verify if file action list is displayed under folder in folder content  ${actions list marquee}
+    
+    ...  ELSE
+    
+    ...  Run Keywords  Select long view mode in toolbar
+    
+    ...  AND  Verify if long view is applied in folder content
+    
+    ...  AND  Verify if file action list is displayed under folder in folder content  ${actions list exhibit}
+    
+    ...  AND  Verify if file metadata list is displayed under folder in folder content  ${metadata list}  #TC-018: The metadata info is not displayed in List view
+    
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Collapse folder in side pane  @{folder path}[0]

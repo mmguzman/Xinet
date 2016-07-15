@@ -1,0 +1,69 @@
+*** Settings ***
+Library  ../../tests/steps/BreadcrumbsNavigatorSteps.py
+Library  ../../tests/steps/FileContentModalSteps.py
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneFiltersSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Images
+${folder name}  FPO File Formats
+${file} =  Dalim LW
+
+@{new_metadata_value} =  wnv_text  new_text
+@{metadata_value_by_default} =  wnv_text  ${EMPTY}
+${expected_recent_activity}  wnv_text: [NULL] -> [new_text]
+
+*** Test Cases ***
+XNT-67
+    [Documentation]   XNT-67:Verify that the list of events matches the recent user activity when clicking History tab.
+
+    [Tags]  BVT  BareBones  DetailsView  Marquee  Exhibit
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  ${folder name}
+
+    Click view file  ${file}
+
+    Click metadata tab
+
+    Set textbox in file content modal  ${new_metadata_value}
+
+    Click save all button
+
+    Click back button
+
+    Click close file content modal
+
+    Run Keyword If  '${TEMPLATE}' == 'exhibit'
+
+    ...  Click folder link in breadcrumbs and close alert  ${folder name}
+
+    Click view file  ${file}
+    
+    Click history tab
+
+    Click metadata changed link
+
+    Verify if metadata changed value is displayed in history list  ${expected_recent_activity}
+
+    [Teardown]   Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+            ...  AND  Click close file content modal
+
+            ...  AND  Click folder link in breadcrumbs  ${folder name}
+
+            ...  AND  Click view file  ${file}
+
+            ...  AND  Set metadata textbox in file content modal  ${metadata_value_by_default}
+
+            ...  AND  Click folder link in breadcrumbs  ${folder name}
+
+            ...  AND  Collapse folder in side pane  @{folder path}[0]

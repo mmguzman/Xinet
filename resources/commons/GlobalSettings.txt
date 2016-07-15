@@ -1,0 +1,27 @@
+*** Settings ***
+Documentation  The resource file with reusable variables.
+
+*** Variables ***
+#************************** Browser ******************************
+${BROWSER}  firefox
+${IMPLICIT_WAIT}  10
+${EXPLICIT_WAIT}  20
+${TEMPLATE}  marquee
+
+#************************** Servers ******************************
+${PORTAL_IP}  131.106.110.51
+${SERVER_IP}  131.106.110.187
+${SERVER_NAME}  snowserver
+
+#************************** Credentials ******************************
+${XINET_USER}  wnv
+${XINET_PASSWORD}  wnv
+${WEBNATIVE_USER}  nativeadmin
+${WEBNATIVE_PASSWORD}  admin
+${WEBNATIVE_EMPTY_PASSWORD}  ${EMPTY}
+
+#************************** Language encoding ***********************
+${LANGUAGE_TYPE}  Roman (English, Francais, Deutsch, etc.)
+
+#************************** Portal Admin ******************************
+${PORTAL_ADMIN_PASSWORD}  admin

@@ -1,0 +1,33 @@
+*** Settings ***
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Audio
+${folder name}  Audio
+
+*** Test Cases ***
+XNT-46
+    [Documentation]  XNT-46: Verify that the date information is displayed when clicking Dates
+
+    [Tags]  BVT  BareBones  Navigation  Marquee
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  ${folder name}
+
+    Select short view mode in toolbar
+
+    Select dates button in toolbar
+
+    Verify if dates section is displayed in file  ${folder path}  ${folder name}
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Collapse folder in side pane  @{folder path}[0]

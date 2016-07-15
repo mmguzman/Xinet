@@ -1,0 +1,15 @@
+*** Settings ***
+Documentation  Configurator Test Suite
+
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Resource  ../../resources/commons/GlobalSettings.txt
+
+Suite Setup  Setup
+Suite Teardown  Teardown
+
+*** Keywords ***
+Setup
+    Login to webnative  ${SERVER_IP}  ${WEBNATIVE_USER}  ${WEBNATIVE_PASSWORD}
+
+Teardown
+    Close browser

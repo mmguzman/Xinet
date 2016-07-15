@@ -1,0 +1,24 @@
+*** Settings ***
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativePrintHotFolderSteps.py
+Resource  ../../resources/commons/Keywords.txt
+
+*** Variables ***
+${queue_name}  PDFImage
+
+*** Test Cases ***
+Delete Print Queue
+    [Documentation]  Delete the print queue created by Configurator
+    
+    [Tags]  Uninstall
+    
+    Click print hot folder
+    
+    Click print queues link
+    
+    Delete print queue  ${queue_name}
+    
+    #Verify if the queue was deleted correctly
+    Verify if pdf ir queue is not displayed  ${queue_name}
+    
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}

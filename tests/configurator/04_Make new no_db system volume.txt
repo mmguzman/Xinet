@@ -1,0 +1,25 @@
+*** Settings ***
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativeVolumesUsersSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Test Cases ***
+XNT-3
+    [Documentation]  XNT-3: Make a new system volume without DB enabled
+    
+    [Tags]  Configurator
+
+    Click volumes users link
+    
+    Click system volumes link
+    
+    #Verify if the volume is already created
+    ${volume already created}  Is volume displayed  ${SERVER_NAME}_no_db
+    
+    Add new system volume  ${SERVER_NAME}  no_db
+    
+    #Verify if the volume was created correctly
+    Run Keyword unless  ${volume already created}  Verify volume displayed  ${SERVER_NAME}_no_db
+
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}

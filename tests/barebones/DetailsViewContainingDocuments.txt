@@ -1,0 +1,59 @@
+*** Settings ***
+Library  ../../tests/steps/BreadcrumbsNavigatorSteps.py
+Library  ../../tests/steps/FileContentModalSteps.py
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneFiltersSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  InDesign Job  Abercrombie&Kent  Links
+${selected img}   01autosoccer.jpg
+${selected file}  01autolink.indd
+@{expected_annotations_button}=  Rectangle  Stamp
+
+*** Test Cases ***
+XNT-101
+    [Documentation]  XNT-101:Verify if the annotations are displayed when clicking on file in containing tab.
+
+    [Tags]  BVT  BareBones  DetailsView  Marquee  Exhibit
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  @{folder path}[4]
+
+    Click view file  ${selected img}
+
+    Click containing tab
+
+    Click file in containing list
+
+    Click view file  ${selected file}
+
+    Wait until file is loaded in file content modal  ${selected file}
+
+    Verify if file content modal is displayed  ${selected file}
+
+    Click show annotations button
+
+    Click right arrow in file content modal
+
+    Run Keyword And Continue On Failure  Verify if annotation type is displayed in file content modal  @{expected_annotations_button}[0]
+
+    Verify if annotation type is displayed in file content modal  @{expected_annotations_button}[1]
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...  AND  Click back to file content modal button
+    
+    ...  AND  Click close file content modal
+
+    ...  AND  Click folder link in breadcrumbs  @{folder path}[3]
+
+    ...  AND  Collapse folder in side pane  @{folder path}[0]

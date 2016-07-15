@@ -1,0 +1,48 @@
+*** Settings ***
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Images
+@{actions list marquee} =  Download Options  Show Details  Show Annotations  Add to basket  Manage Files
+@{actions list exhibit} =  Download High-Res  Manage Files  Custom Order  Add to basket  Show Annotations  Show versions
+
+*** Test Cases ***
+XNT-33 XNT-34 XNT-35
+    [Documentation]  XNT-33: Verify that after select the 'Short View' the folder content is displayed
+    ...              in folder content pane as short previews
+    ...
+    ...              XNT-34: Verify that after select the 'Short View' the file actions are displayed
+    ...              for the short previews
+    ...
+    ...              XNT-35: Verify that after select the 'Short View' the metadata info is not displayed
+    ...              for the short previews
+    [Tags]  BVT  BareBones  Navigation  Marquee  Exhibit
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  @{folder path}[2]
+
+    Select short view mode in toolbar
+
+    Verify if short view is applied in folder content
+
+    Verify if file metadata section is not displayed under folder in folder content
+
+    Run Keyword If  '${template}' == 'marquee'
+    
+    ...  Verify if file action list is not displayed under folder in folder content  ${actions list marquee}
+
+    ...  ELSE
+
+    ...  Verify if file action list is displayed under folder in folder content  ${actions list exhibit}
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Collapse folder in side pane  @{folder path}[0]

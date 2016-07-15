@@ -1,0 +1,41 @@
+#!/bin/csh 
+#
+# Linux uninstall script. 
+
+
+set me=`whoami`
+if ("$me" != root) then
+        echo "You must have root privileges to run this script"
+        exit 1
+endif
+
+# 
+
+#  FullPress
+# repprint:
+# 	echo -n "Do you really want to remove the FullPress, WebNative, Venture and all configuration? "
+#         set resp=$<
+#         if ("$resp" =~ [Nn]*) then
+#                 echo "Leaving FullPress  installed."
+#                 exit 1
+#         else if ("$resp" !~ [Yy]*) then
+#                 echo Please answer \"yes\" or \"no\":
+#                 goto repprint
+#         endif
+#         endif
+
+if (-x /usr/etc/venture/bin/solrutil) /usr/etc/venture/bin/solrutil -stop >& /dev/null
+if (-x /usr/etc/venture/bin/dbmgr) /usr/etc/venture/bin/dbmgr -shutdown >& /dev/null
+
+if (-x /etc/init.d/xinet) then
+	echo "Halting services"
+	( /etc/init.d/xinet stop )
+endif
+
+rm -f /etc/init.d/xinet /etc/rc2.d/S99xinet /etc/rc2.d/K15xinet /etc/rc5.d/S99xinet /etc/rc5.d/K15xinet
+rm -rf /usr/etc/appletalk /usr/etc/venture /usr/etc/webnative /usr/adm/appletalk /usr/adm/webnative
+rm -f /usr/share/pixmaps/FullPress.png /usr/share/applications/fullpress.desktop
+
+echo "FullPress, WebNative, and Venture have been removed"
+
+exit 0

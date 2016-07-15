@@ -1,0 +1,26 @@
+*** Settings ***
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativeDatabaseSteps.py
+Resource  ../../resources/commons/Keywords.txt
+
+*** Test Cases ***
+XNT-17
+    [Documentation]  XNT-17: Enable Solr for the database
+    
+    [Tags]  Configurator
+    
+    Click database link
+    
+    Click admin link
+    
+    Click searching link
+    
+    #Verify if the Solr DB is already created
+    ${solr already created}  Is solr db created
+    
+    Create solr db
+    
+    #Verify if the Solr DB was created correctly
+    Run Keyword unless  ${solr already created}  Verify if solr db is created
+    
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}

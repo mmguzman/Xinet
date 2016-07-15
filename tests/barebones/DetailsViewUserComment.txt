@@ -1,0 +1,64 @@
+*** Settings ***
+Library  ../../tests/steps/BreadcrumbsNavigatorSteps.py
+Library  ../../tests/steps/FileContentModalSteps.py
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneFiltersSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Images
+${folder name}  FPO File Formats
+${comment}=  Test comment
+${file name selected} =  Dalim LW
+
+*** Test Cases ***
+XNT-65
+    [Documentation]  XNT-65:Verify that it is added an new user comment with the word "Anthrax.XXX" where XXX is some randome number
+
+    [Tags]  BVT  BareBones  DetailsView  Marquee  Exhibit
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  ${folder name}
+
+    Click view file  ${file name selected}
+
+    Click show annotations button
+
+    Click right arrow in file content modal
+
+    Click text button
+
+    Run Keyword If  '${TEMPLATE}' == 'exhibit'
+
+    ...  Click image on preview
+
+    Set user comment  ${comment}
+
+    Click add button
+
+    Verify if comment is displayed in annotation list  ${comment}
+
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}
+
+                Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+                  ...  Run Keywords  Delete user comment  ${comment}
+
+                  ...  AND  Click close file content modal
+
+                  ...  AND  Collapse folder in side pane  @{folder path}[0]
+
+                  ...  ELSE
+
+                  ...  Run Keywords  Delete user comment  ${comment}
+
+                        ...  AND  Click folder link in breadcrumbs  ${folder name}
+
+                        ...  AND  Collapse folder in side pane  @{folder path}[0]

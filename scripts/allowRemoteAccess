@@ -1,0 +1,9 @@
+#!/bin/bash
+
+   keychain="/var/root/Library/Keychains/login.keychain"
+   security unlock-keychain -p Test1ng! ${keychain} &>/dev/null
+   
+   if [ $? -ne 0 ];then
+     echo "Cannot open keychain ${keychain}"
+     exit 1
+   fi

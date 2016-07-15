@@ -1,0 +1,24 @@
+*** Settings ***
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/BasicToolsToolbarSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/BreadcrumbsNavigatorSteps.py
+Library  ../../tests/steps/LoginSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Test Cases ***
+XNT-44
+    [Documentation]  XNT-44: Verify that an error message is displayed when logging as 'foo'.
+    [Tags]  BareBones  Authentication  Marquee  Exhibit
+
+    Click logout link
+
+    Login to portal invalid credentials  foo  foo
+
+    Verify if error message is displayed in login page
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Login to portal  ${PORTAL_IP}  ${SERVER_IP}  ${XINET_USER}  ${XINET_PASSWORD}

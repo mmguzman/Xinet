@@ -1,0 +1,29 @@
+*** Settings ***
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativeLoggingSteps.py
+Library  ../../tests/steps/LoginSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{request_queue} =  Video & Audio Previews  0  0  0
+
+*** Test Cases ***
+XNT-77
+    [Documentation]  XNT-77: Verify that the "Video&Audio Previews" queue is 
+    ...              empty in the "Preview Generation" link.
+
+    [Tags]  BVT  BareBones  Video  Exhibit  Marquee
+
+    Login to webnative  ${SERVER_IP}  ${WEBNATIVE_USER}  ${WEBNATIVE_PASSWORD}
+
+    Click Logging link
+
+    Click Preview Generation link
+
+    #Verify if the "Processing, Waiting and Holding" values for the "Video&Audio Previews" are 0.
+    Verify if the request queue name is displayed in the request queue list  @{request_queue}[0]  @{request_queue}[1]  @{request_queue}[2]  @{request_queue}[3]
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Login to portal  ${PORTAL_IP}  ${SERVER_IP}  ${XINET_USER}  ${XINET_PASSWORD}

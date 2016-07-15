@@ -1,0 +1,167 @@
+*** Settings ***
+Library  ../../tests/steps/BasicToolsToolbarSteps.py
+Library  ../../tests/steps/BasketSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+Library  ../../tests/steps/BreadcrumbsNavigatorSteps.py
+Library  ../../tests/steps/FileContentModalSteps.py
+Library  ../../tests/steps/SidePaneFiltersSteps.py
+
+*** Variables ***
+#annotation
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Images
+${folder name}  FPO File Formats
+${file to copy} =  Dalim LW
+
+#@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  InDesign Job  Abercrombie&Kent
+@{expected_flag} =  Marked "Flagged"  1
+#${file to copy} =  01auto2.indd
+#${file extesion} =  .indd
+${note} =  This the flag.
+@{annotation_item}=  flag
+
+#metadata
+${folder name}  Abercrombie&Kent
+@{set_author} =  Author  five_Byline_Details
+@{set_wnv_text_popup} =  wnv_text_popup  apple
+@{expected_author} =  Author  five_Byline_Details  text
+@{expected_wnv_text_popup} =  wnv_text_popup  apple  combo
+@{author_default} =  Author  ${EMPTY}  Replace
+@{wnv_text_popup_default} =  wnv_text_popup    ${EMPTY}
+
+#batch report
+${show keyword check} =  keywords
+${show annotations check} =  annotations
+${reportpreview}=  Only Previews that Contain Annotations
+@{expected metadata list}=  ${expected_wnv_text_popup}  ${expected_author}
+
+#collection
+@{file list} =  01autobatchrpt.eps  01autosoccer.jpg
+
+*** Test Cases ***
+XNT-66
+    [Documentation]  XNT-66:Verify that MD values entered in batchapply&annotation are displayed when selecting GenerateBatchRpt.
+
+    [Tags]  BVT  BareBones  DetailsView  Marquee  Exhibit
+
+    #Prequist set an anotation and set a metadata
+    #Set an annotation: Flag
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  ${folder name}
+
+    Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+    ...  Select list view mode in toolbar
+
+    ...  ELSE
+
+    ...  Select short view mode in toolbar
+
+    ${new file name} =  Generate random file name
+
+    Copy file folder content  ${file to copy}  ${new file name}
+
+    Wait until file is copied  ${new file name}
+
+    Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+    ...  Run Keywords  Select short view mode in toolbar
+
+    ...  AND  Select actions button in toolbar
+
+    Click show annotations icon  ${new file name}
+
+    Create annotation  ${note}  @{annotation_item}
+
+    Click show annotations button
+
+    Click right arrow in file content modal
+
+    Verify if annotation item is displayed on canvas  ${expected_flag}
+
+    Click back to file content modal button
+
+    #Set a metadata value
+    Click metadata tab
+
+    Set textbox in file content modal  ${set_author}
+
+    Set combobox keyword file content modal  ${set_wnv_text_popup}
+
+    Click save all button
+
+    Run Keyword If  '${template}' == 'marquee'
+
+    ...  Run Keyword  Click close file content modal
+
+    ...  ELSE
+
+        ...  Run Keywords  Click folder link in breadcrumbs  ${folder name}
+
+        ...  AND  select_long_view_mode_in_toolbar
+
+    Verify if metadata value is displayed in folder content  ${new file name}  ${expected_author}
+
+    Verify if metadata value is displayed in folder content  ${new file name}  ${expected_wnv_text_popup}
+
+    #TC: Verify if metadata and annotation are displayed in Batch Report
+    Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+    ...  Select list view mode in toolbar
+
+    ...  ELSE
+
+    ...  Select short view mode in toolbar
+
+    Click add to basket icon  ${new file name}
+
+#    Click folder link in side pane  Links
+#
+#    Select actions button in toolbar
+#
+#    Add list to basket  ${file list}
+
+    Click basket button
+
+    Click batch report link
+
+    #Set batch report in modal content
+    Check show annotations keyword  ${show keyword check}
+
+    Check show annotations keyword  ${show annotations check}
+
+    Select report preview option  ${reportpreview}
+
+    click Generate batch report button
+
+    Run Keyword And Continue On Failure  Verify if annotation is displayed in batch report  ${new file name}
+
+    Verify if metadata values are displayed in batch report  ${expected metadata list}  ${new file name}
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+    
+                ...  AND  Click close in batch report
+
+                ...  AND  Click close modal content button
+
+                ...  AND  Click clear basket link
+
+                ...  AND  Click folder link in breadcrumbs  Return to Browse
+
+                ...  AND  Click folder link in side pane  ${folder name}
+
+                Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+                ...  Select list view mode in toolbar
+
+                Run Keywords  Delete file  ${new file name}
+
+                ...  AND  Collapse folder in side pane  @{folder path}[0]

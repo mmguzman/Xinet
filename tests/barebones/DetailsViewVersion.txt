@@ -1,0 +1,119 @@
+*** Settings ***
+Library  ../../tests/steps/BreadcrumbsNavigatorSteps.py
+Library  ../../tests/steps/FileContentModalSteps.py
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneFiltersSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Images
+${folder name}  FPO File Formats
+${file to copy} =  Dalim LW
+${flag note} =  Flag annotation
+@{expected_result} =  Marked "Flagged"  1
+
+*** Test Cases ***
+XNT-98
+    [Documentation]  XNT-98:Verify if a created version is selected as a working version.
+
+    [Tags]  BVT  BareBones  DetailsView  Marquee  Exhibit  IssueExhibit
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  ${folder name}
+
+    Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+    ...  Select list view mode in toolbar
+
+    ...  ELSE
+
+    ...  Select short view mode in toolbar
+
+    ${new file name} =  Generate random file name
+
+    Copy file folder content  ${file to copy}  ${new file name}
+
+    Wait until file is copied  ${new file name}
+
+    Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+    ...  Run Keywords  Select short view mode in toolbar
+
+    ...  AND  Select actions button in toolbar
+
+    # Select the copied file and create a new version
+    Click view file  ${new file name}
+
+    Click versions tab
+
+    ${version_one} =  Catenate  SEPARATOR=  ${new file name}  _001
+
+    Click create new version button
+
+    Run Keyword If  '${TEMPLATE}' == 'exhibit'
+
+    ...  Click versions tab
+
+    Verify if version is displayed in list  ${version_one}
+
+    Run Keyword If  '${TEMPLATE}' == 'exhibit'
+
+    ...  Click folder link in breadcrumbs  ${folder name}
+
+    # Add flag annotation
+    Click show annotations icon  ${new file name}
+
+    Create annotation  ${flag note}  flag
+
+    # Create a new version (2)
+    Click versions tab
+
+    ${version_two} =  Catenate  SEPARATOR=  ${new file name}  _002
+
+    Click create new version button
+
+    Run Keyword If  '${TEMPLATE}' == 'exhibit'
+
+    ...  Run Keywords  Click_back_to_file_button
+
+    ...  AND  Click versions tab
+
+    Verify if version is displayed in list  ${version_two}
+
+    # Return to original version
+    Select version  ${version_one}
+
+    Click promote version  1
+
+    Run Keyword If  '${TEMPLATE}' == 'exhibit'
+
+    ...  Click folder link in breadcrumbs  ${folder name}
+
+    Click show annotations icon  ${new file name}
+
+    Verify if annotation item is not displayed on canvas  ${expected_result}
+
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}
+
+                Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+                ...  Run Keywords  Click back to file content modal button
+
+                ...  AND  Click close file content modal
+
+                ...  AND  Select list view mode in toolbar
+
+                ...  ELSE
+
+                ...  Click folder link in breadcrumbs  ${folder name}
+
+                Run Keywords  Delete file  ${new file name}
+
+                ...  AND  Collapse folder in side pane  @{folder path}[0]

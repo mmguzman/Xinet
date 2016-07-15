@@ -1,0 +1,118 @@
+*** Settings ***
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Facet-Numbers-Dates  Date Range
+@{file names} =  2MonthsAgo.indd  5DaysAgo.indd  LastMonth.indd  Today.indd  Yesterday.indd
+@{expected_files_for_today} =  Today.indd
+@{expected_files_for_yesterday} =  Yesterday.indd
+@{expected_files_for_last_7days} =  5DaysAgo.indd  Today.indd  Yesterday.indd
+@{expected_files_for_last_30days} =  5DaysAgo.indd  Today.indd  Yesterday.indd
+@{expected_files_for_this_month} =  5DaysAgo.indd  Today.indd  Yesterday.indd
+@{expected_files_for_last_month} =  LastMonth.indd
+@{expected_files_for_custom_range} =  Today.indd  Yesterday.indd
+
+*** Test Cases ***
+XNT-75
+    [Documentation]  XNT-75: Verify that the correct files are displayed according to the selected dates 
+
+    [Tags]  BVT  BareBones  DateRanges  Marquee  Exhibit  IssueExhibit  IssueMarquee
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  @{folder path}[3]
+
+    Set values for xwnvDateRange  ${file names}
+     
+    Verify if xwnvDateRange value is displayed  ${file names}
+    
+    #TC: Verify if the "Today.indd"file is displayed according to the selected range in the calendar: Today
+    Click xwnvDateRange button  # Fails due to XIN-6051 (Marquee template)
+    
+    Click today button
+    
+    Run Keyword And Continue On Failure  Verify if xwnvDateRange is displaying dates according selected range  Today_range
+    
+    Run Keyword And Continue On Failure  Verify if files are displayed according to selected range  ${expected_files_for_today}
+    
+    Click clear all filters button
+    
+    #TC: Verify if the "Yesterday.indd"file is displayed according to the selected range in the calendar: Yesterday
+    Click xwnvDateRange button
+    
+    Click yesterday button
+    
+    Run Keyword And Continue On Failure  Verify if files are displayed according to selected range  ${expected_files_for_yesterday}
+    
+    Run Keyword And Continue On Failure  Verify if xwnvDateRange is displaying dates according selected range  Yesterday_range
+    
+    Click clear all filters button
+    
+    # TC: Verify if the "5DaysAgo.indd, Today.indd, Yesterday.indd"files are displayed 
+    # according to the selected range in the calendar: Last 7 days
+    Click xwnvDateRange button
+    
+    Click last 7days button
+    
+    Run Keyword And Continue On Failure  Verify if files are displayed according to selected range  ${expected_files_for_last_7days}
+    
+    Run Keyword And Continue On Failure  Verify if xwnvDateRange is displaying dates according selected range  Last_7days_range
+    
+    Click clear all filters button
+    
+    # TC: Verify if the "5DaysAgo.indd, Today.indd, Yesterday.indd"files are displayed 
+    # according to the selected range in the calendar: Last 30 days
+    Click xwnvDateRange button
+    
+    Click last 30days button
+    
+    Run Keyword And Continue On Failure  Verify if files are displayed according to selected range  ${expected_files_for_last_30days}
+    
+    Run Keyword And Continue On Failure  Verify if xwnvDateRange is displaying dates according selected range  Last_30days_range
+    
+    Click clear all filters button
+    
+    # TC: Verify if the "5DaysAgo.indd, Today.indd, Yesterday.indd"files are displayed 
+    # according to the selected range in the calendar: This Month
+    Click xwnvDateRange button
+    
+    Click this month button
+    
+    Run Keyword And Continue On Failure  Verify if files are displayed according to selected range  ${expected_files_for_this_month}  This Month
+    
+    Run Keyword And Continue On Failure  Verify if xwnvDateRange is displaying dates according selected range  This_Month_range
+    
+    Click clear all filters button
+    
+    # TC: Verify if the "LastMonth.indd"file is displayed according to the selected range 
+    # in the calendar: Last Month
+    Click xwnvDateRange button
+    
+    Click Last month button
+    
+    Run Keyword And Continue On Failure  Verify if files are displayed according to selected range  ${expected_files_for_last_month}
+    
+    Run Keyword And Continue On Failure  Verify if xwnvDateRange is displaying dates according selected range  Last_Month_range
+    
+    Click clear all filters button
+    
+    # TC: Verify if the "Today.indd  Yesterday.indd"files are displayed according to the 
+    # selected range in the calendar: Custom Range
+    Click xwnvDateRange button
+    
+    Click custom range button
+    
+    Run Keyword And Continue On Failure  Verify if files are displayed according to selected range  ${expected_files_for_custom_range}
+    
+    Verify if xwnvDateRange is displaying dates according selected range  Custom_range
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+    ...         AND  Click clear all filters button
+    ...         AND  click navigator link
+    ...         AND  Collapse folder in side pane  @{folder path}[0]

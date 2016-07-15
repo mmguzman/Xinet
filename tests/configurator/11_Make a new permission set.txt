@@ -1,0 +1,78 @@
+*** Settings ***
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativeDatabaseSteps.py
+Resource  ../../resources/commons/Keywords.txt
+
+*** Variables ***
+${template_name}  wnv_tmpl
+${permission_set_name}  wnv_perm
+
+@{wnv_text} =  wnv_text  browse  enabled  ${None}
+@{wnv_date} =  wnv_date  browse  enabled  ${None}
+@{wnv_bool} =  wnv_bool  browse  enabled  ${None}
+@{wnv_int} =  wnv_int  browse  enabled  ${None}
+@{wnv_float} =  wnv_float  browse  enabled  ${None}
+@{wnv_text_xmp} =  wnv_text_xmp  browse  enabled  ${None}
+@{wnv_text_popup} =  wnv_text_popup  browse  enabled  ${None}
+@{wnv_text_popup_c_values} =  wnv_text_popup_c_values  browse  enabled  ${None}
+@{wnv_text_locked} =  wnv_text_locked  browse  enabled  ${None}
+@{wnv_text_uploader_rq} =  wnv_text_uploader_rq  browse  enabled  required
+@{wnv_text_áccënt} =  wnv_text_áccënt  browse  enabled  ${None}
+@{usage_start_date} =  usage_start_date  browse  ${None}  ${None}
+@{usage_end_date} =  usage_end_date  browse  ${None}  ${None}
+@{Byline} =  Byline  browse  ${None}  ${None}
+@{xwnv:USA_abbrev_mo} =  xwnv:USA_abbrev_mo  browse  ${None}  ${None}
+@{xwnv:USA_num_12h} =  xwnv:USA_num_12h  browse  ${None}  ${None}
+@{xwnv:EU_full_month} =  xwnv:EU_full_month  browse  ${None}  ${None}
+@{xwnv:EU_dmy_24h} =  xwnv:EU_dmy_24h  browse  ${None}  ${None}
+@{xwnv:Year_2digit} =  xwnv:Year_2digit  browse  ${None}  ${None}
+@{xwnv:Year_4digit} =  xwnv:Year_4digit  browse  ${None}  ${None}
+@{xwnv:Dash_num_24h} =  xwnv:Dash_num_24h  browse  ${None}  ${None}
+@{xwnv:bucket_1_month} =  xwnv:bucket_1_month  browse  ${None}  ${None}
+@{xwnv:bucket_1_year} =  xwnv:bucket_1_year  browse  ${None}  ${None}
+@{xwnv:bucket_2_year} =  xwnv:bucket_2_year  browse  ${None}  ${None}
+@{xwnv:bucket_5_year} =  xwnv:bucket_5_year  browse  ${None}  ${None}
+@{xwnv:bucket_10_year} =  xwnv:bucket_10_year  browse  ${None}  ${None}
+@{xwnv:DateRange} =  xwnv:DateRange  browse  ${None}  ${None}
+@{xwnv:facet_big_int} =  xwnv:facet_big_int  browse  ${None}  ${None}
+@{xwnv:facet_int} =  xwnv:facet_int  browse  ${None}  ${None}
+@{xwnv:facet_small_int} =  xwnv:facet_small_int  browse  ${None}  ${None}
+@{xwnv:facet_tiny_int} =  xwnv:facet_tiny_int  browse  ${None}  ${None}
+@{xwnv:facet_float_2dec} =  xwnv:facet_float_2dec  browse  ${None}  ${None}
+@{xwnv:facet_float_4dec} =  xwnv:facet_float_4dec  browse  ${None}  ${None}
+
+
+@{data_field_list} =  ${wnv_text}  ${wnv_date}  ${wnv_bool}  ${wnv_int}  ${wnv_float}
+...                   ${wnv_text_xmp}  ${wnv_text_popup}  ${wnv_text_popup_c_values}
+...                   ${wnv_text_locked}  ${wnv_text_uploader_rq}  ${wnv_text_áccënt}
+...                   ${usage_start_date}  ${usage_end_date}  ${Byline}  ${xwnv:USA_abbrev_mo}
+...                   ${xwnv:USA_num_12h}  ${xwnv:EU_full_month}  ${xwnv:EU_dmy_24h}
+...                   ${xwnv:Year_2digit}  ${xwnv:Year_4digit}  ${xwnv:Dash_num_24h}
+...                   ${xwnv:bucket_1_month}  ${xwnv:bucket_1_year}  ${xwnv:bucket_2_year}
+...                   ${xwnv:bucket_5_year}  ${xwnv:bucket_10_year}  ${xwnv:DateRange}
+...                   ${xwnv:facet_big_int}  ${xwnv:facet_int}  ${xwnv:facet_small_int}
+...                   ${xwnv:facet_tiny_int}  ${xwnv:facet_float_2dec}  ${xwnv:facet_float_4dec}
+
+*** Test Cases ***
+XNT-12
+    [Documentation]  XNT-12: Make a permission set
+    
+    [Tags]  Configurator
+    
+    Click database link
+    
+    Click permission sets link
+    
+    #Verify if the permission set is already created
+    ${permission set already created}  Is permission set displayed  ${permission_set_name}
+    
+    #Click new permission set link
+    
+    Add new permission set  ${template_name}  ${permission_set_name}  ${data_field_list}
+    
+    #Verify if the permission set was created correctly
+    Run Keyword unless  ${permission set already created}  Verify message displayed  Permission Set ${permission_set_name} successfully added.
+    
+    #Verify message displayed  Permission Set ${permission_set_name} successfully added.
+    
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}

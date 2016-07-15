@@ -1,0 +1,25 @@
+*** Settings ***
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativeVolumesUsersSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Test Cases ***
+XNT-4
+    [Documentation]  XNT-4: Make a new system volume without FPO enabled
+    
+    [Tags]  Configurator
+
+    Click volumes users link
+    
+    Click system volumes link
+    
+    #Verify if the volume is already created
+    ${volume already created}  Is volume displayed  ${SERVER_NAME}_no_fpo
+    
+    Add new system volume  ${SERVER_NAME}  no_fpo
+    
+    #Verify if the volume was created correctly
+    Run Keyword unless  ${volume already created}  Verify volume displayed  ${SERVER_NAME}_no_fpo
+
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}

@@ -1,0 +1,96 @@
+*** Settings ***
+Library  ../../tests/steps/BasicToolsToolbarSteps.py
+Library  ../../tests/steps/BasketSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files
+${folder name}  InDesign Job
+#it refers to the 'Abercrombie&Kent' file
+${file name}  Abercrombie
+@{wnv_text} =  wnv_text  five_text  Replace
+@{wnv_text_popup} =  wnv_text_popup  kiwi
+@{wnv_text_xmp} =  wnv_text_xmp  five_text_xmp  Replace
+@{wnv_int} =  wnv_int  5  Set Equal To
+@{wnv_float} =  wnv_float  5.5  Set Equal To
+@{wnv_date} =  wnv_date  ${wnv_date_values}
+@{wnv_date_values}  December  21  2012
+@{wnv_bool} =  wnv_bool  ${true}
+
+@{data_field_list} =  ${wnv_text}  ${wnv_text_popup}  ${wnv_text_xmp}
+...                   ${wnv_int}  ${wnv_float}  ${wnv_bool}  ${wnv_date}
+
+@{data_field_list_to_verify} =  ${wnv_text}  ${wnv_text_popup}  ${wnv_text_xmp}
+...                             ${wnv_int}  ${wnv_float}  ${wnv_bool}
+
+# MD values to set by default:
+@{wnv_text_default} =  wnv_text  ${EMPTY}  Replace
+@{wnv_text_popup_default} =  wnv_text_popup  ${EMPTY}
+@{wnv_text_xmp_default} =  wnv_text_xmp  ${EMPTY}  Replace
+@{wnv_int_default} =  wnv_int  ${EMPTY}  Set Equal To
+@{wnv_float_default} =  wnv_float  ${EMPTY}  Set Equal To
+@{wnv_date_default} =  wnv_date  ${wnv_date_values_default}
+@{wnv_date_values_default}  ${EMPTY}  ${EMPTY}  ${EMPTY}
+@{wnv_bool_default} =  wnv_bool  ${false}
+
+@{default_data_field_list_values} =  ${wnv_text_default}  ${wnv_text_popup_default}  ${wnv_text_xmp_default}
+...                   ${wnv_int_default}  ${wnv_float_default}  ${wnv_bool_default}  ${wnv_date_default}
+
+*** Test Cases ***
+XNT-53
+    [Documentation]  XNT-53:Verify that the keyword values are set when clicking Apply Keywords
+
+    [Tags]  BVT  BareBones   Collection  Marquee  Exhibit  IssueExhibit
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  ${folder name}
+
+    Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+    ...  Select list view mode in toolbar
+
+    ...  ELSE
+
+    ...  Select long view mode in toolbar
+
+    Click add to basket icon  ${file name}
+
+    Click basket button
+
+    Click batch keyword apply link
+
+    Apply keyword to fields list  ${data_field_list}
+
+    Click apply keywords button
+    
+    Run Keyword If  '${TEMPLATE}' == 'exhibit'
+
+    ...  Select long view mode in toolbar
+
+    Run Keyword And Continue On Failure  Verify if keywords updated message is displayed  # Fails due to XIN-6097 (Exhibit template)
+
+    Close apply keyword modal
+
+    Run Keyword And Continue On Failure  Verify if keyword value is displayed in collection  ${wnv_date_values}
+
+    Verify if keyword list value is displayed in collection  ${data_field_list_to_verify}
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Click batch keyword apply link
+
+    ...         AND  Apply keyword to fields list  ${default_data_field_list_values}
+
+    ...         AND  Click apply keywords button
+
+    ...         AND  Select icon view mode in toolbar
+
+    ...         AND  Click clear basket link  AND  Back To Home

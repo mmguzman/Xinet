@@ -1,0 +1,27 @@
+*** Settings ***
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativeVolumesUsersSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+${template_name}  wnv_tmpl
+${permission_set_name}  wnv_perm
+
+*** Test Cases ***
+XNT-13
+    [Documentation]  XNT-13: Apply Template and Permission Set to wnv user
+    
+    [Tags]  Configurator
+    
+    Click volumes users link
+    
+    Click permissions link
+    
+    Click edit user permissions link
+    
+    Apply template permission to user  ${XINET_USER}  ${template_name}  ${permission_set_name}
+    
+    Verify message displayed  Permission Set successfully updated for ${XINET_USER}.
+    
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}

@@ -1,0 +1,69 @@
+*** Settings ***
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneFiltersSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Facet-Numbers-Dates  Numbers
+
+*** Test Cases ***
+XNT-71
+    [Documentation]  XNT-71:Verify if the auto ranges are correct for each integer fields when bucket size is auto mode.
+
+    [Tags]  BVT  BareBones  Marquee  Exhibit  Facet
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  @{folder path}[3]
+
+    #TC1: Verify if the auto range is correct for 'Big-integer'.
+    Click folder link in side pane  Big-integer
+
+    Expand filters link in side pane
+
+    Expand folder for xwnvfacet  Big-integer
+
+    Run Keyword And Continue On Failure  Verify if metadata is configured according to bucket size  1 - 50000
+
+    Collapse filters link in side pane
+
+    #TC2: Verify if the auto range is correct for 'Integer'.
+    Click folder link in side pane  Integer
+
+    Expand filters link in side pane
+
+    Expand folder for xwnvfacet  Integer
+
+    Run Keyword And Continue On Failure  Verify if metadata is configured according to bucket size  1 - 50000
+
+    Collapse filters link in side pane
+
+    #TC:3 Verify if the auto range is correct for 'Small-integer'.
+    Click folder link in side pane  Small-integer
+
+    Expand filters link in side pane
+
+    Expand folder for xwnvfacet  Small-integer
+
+    Run Keyword And Continue On Failure  Verify if metadata is configured according to bucket size  1 - 500
+
+    Collapse filters link in side pane
+
+    #TC:4 Verify if the auto range is correct for 'Tiny-integer'.
+    Click folder link in side pane  Tiny-integer
+
+    Expand filters link in side pane
+
+    Expand folder for xwnvfacet  Tiny-integer
+
+    Verify if metadata is configured according to bucket size  1 - 10
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Collapse filters link in side pane
+
+    ...         AND  Collapse folder in side pane  @{folder path}[0]

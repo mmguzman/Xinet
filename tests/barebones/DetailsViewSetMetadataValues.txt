@@ -1,0 +1,86 @@
+*** Settings ***
+Library  ../../tests/steps/BasketSteps.py
+Library  ../../tests/steps/BreadcrumbsNavigatorSteps.py
+Library  ../../tests/steps/BasicToolsToolbarSteps.py
+Library  ../../tests/steps/FileContentModalSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Library  ../../tests/steps/SidePaneFiltersSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Images
+${folder name}  FPO File Formats
+${file name} =  Dalim LW
+
+@{set_author} =  Author  five_Byline_Details
+@{set_wnv_text_popup} =  wnv_text_popup  apple
+@{expected_author} =  Author  five_Byline_Details  text
+@{expected_wnv_text_popup} =  wnv_text_popup  apple  combo
+@{author_default} =  Author  ${EMPTY}  Replace
+@{wnv_text_popup_default} =  wnv_text_popup    ${EMPTY}
+
+*** Test Cases ***
+XNT-97
+    [Documentation]  XNT-97:Verify if metadata fields are set in Details view when clicking Save All.
+
+    [Tags]  BVT  BareBones   DetailsView  Marquee  Exhibit
+    
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  ${folder name}
+
+    Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+    ...  Select short view mode in toolbar
+
+    ...  ELSE
+
+    ...  Select long view mode in toolbar
+
+    Select details button in toolbar
+
+    Click view file  ${file name}
+
+    Click metadata tab
+
+    Set textbox in file content modal  ${set_author}
+
+    Set combobox keyword file content modal  ${set_wnv_text_popup}
+
+    Click save all button
+
+    Run Keyword If  '${template}' == 'marquee'
+
+    ...  Click close file content modal
+
+    ...  ELSE
+
+    ...  Click folder link in breadcrumbs  ${folder name}
+
+    Run Keyword And Continue On Failure  Verify if metadata value is displayed in folder content  ${file name}  ${expected_author}
+    
+    Verify if metadata value is displayed in folder content  ${file name}  ${expected_wnv_text_popup}
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+            ...  AND  Select short view mode in toolbar
+
+            ...  AND  Select details button in toolbar
+
+            ...  AND  Click view file  ${file name}
+
+            ...  AND  Click metadata tab
+
+            ...  AND  Set textbox in file content modal  ${author_default}
+
+            ...  AND  Set combobox keyword file content modal  ${wnv_text_popup_default}
+
+            ...  AND  Click save all button
+
+            ...  AND  Back To Home

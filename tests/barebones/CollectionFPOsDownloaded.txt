@@ -1,0 +1,62 @@
+*** Settings ***
+Library  ../../tests/steps/BasicToolsToolbarSteps.py
+Library  ../../tests/steps/BasketSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Images
+${folder name}  FPO File Formats
+@{file list} =  132_.fp  16bit.1.tiff  16bit.2.tiff  bitmap.bmp  Crosfield
+@{expected list} =  132_.tif  16bit.1.tif  16bit.2.tif   bitmap.tif   Crosfield
+${file name}  fpo_file.zip
+
+*** Test Cases ***
+XNT-50
+    [Documentation]  XNT-50:Verify that the fpos is downloaded when adding five images to the Collection.
+
+    [Tags]  BVT  BareBones  Collection  Marquee  Exhibit
+
+    [Setup]  Create download directory
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  ${folder name}
+
+    Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+    ...  Select list view mode in toolbar
+
+    ...  ELSE
+
+    ...  Select short view mode in toolbar
+
+    Add list to basket  ${file list}
+
+    Click basket button
+
+    Download archive of fpos  ${file name}
+
+    Wait until file is created  ${file name}
+
+    Close apply keyword modal
+
+    Verify if a file is downloaded  ${file name}
+
+    Extract file  ${file name}
+
+    Verify if file list extracted is displayed  ${expected list}
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Select icon view mode in toolbar
+
+    ...         AND  Click clear basket link  AND  Back To Home
+
+    ...         AND  Delete download directory

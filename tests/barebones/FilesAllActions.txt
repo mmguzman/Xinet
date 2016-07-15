@@ -1,0 +1,119 @@
+*** Settings ***
+Library  ../../tests/steps/BasicToolsToolbarSteps.py
+Library  ../../tests/steps/BasketSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Library  String
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  _Functions
+${folder name}  File Manager
+${upload folder name}  Built-in Uploads
+${file name}  rename_me.pdf
+${file name copied}  ${EMPTY}
+${file name renamed}  ${EMPTY}
+
+*** Test Cases ***
+XNT-78 XNT-79 XNT-80 XNT-81 XNT-82
+    [Documentation]  XNT-78:Verify that the "rename_me.pdf" file is copied as "Copied_file.pdf" when clicking Copy
+
+    ...              XNT-79:Verify that the "Copied_file.pdf" file is renamed to "upload_me.pdf" when clicking Rename
+
+    ...              XNT-80:Verify that the "Download High-Res" allows to download the file "upload_me.pdf" to the machine
+
+    ...              XNT-81:Verify that the "upload_me.pdf" file is deleted in the server
+
+    ...              XNT-82:Verify that the "upload_me.pdf" file is uploaded from the client machine to the server
+
+    [Tags]  BVT  BareBones  Files  Marquee  Exhibit
+
+    [Setup]  Create download directory
+
+    ${file name copied} =  Generate Random String  6  [LETTERS]
+    ${file name copied} =  Catenate  SEPARATOR=  ${file name copied}  .pdf
+
+    ${file name renamed} =  Generate Random String  6  [LETTERS]
+    ${file name renamed} =  Catenate  SEPARATOR=  ${file name renamed}  .pdf
+
+    Log to console  ${file name copied}
+    Log to console  ${file name renamed}
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  ${folder name}
+
+    Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+    ...  Select list view mode in toolbar
+
+    ...  ELSE
+
+    ...  Select short view mode in toolbar
+
+    # XNT-78:Verify that the "rename_me.pdf" file is copied as "Copied_file.pdf" when clicking Copy
+    Copy file folder content  ${file name}  ${file name copied}
+
+    Sleep  60
+
+    Wait until file is copied  ${file name copied}
+
+    Verify if file is displayed in folder content  ${file name copied}
+
+    Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+    ...  Select list view mode in toolbar
+
+    # XNT-79:Verify that the "Copied_file.pdf" file is renamed to "upload_me.pdf" when clicking Rename
+    Log to console  ${file name copied}
+    Log to console  ${file name renamed}
+
+    Rename file  ${file name copied}  ${file name renamed}
+
+    Verify if file is displayed in folder content  ${file name renamed}
+
+    # XNT-80:Verify that the "Download High-Res" allows to download the file "upload_me.pdf" to the machine
+    Download file  ${file name renamed}
+
+    ${file name unzipped} =  Replace String  ${file name renamed}  .pdf  .zip
+
+    Wait until file is created  ${file name unzipped}
+
+    Verify if a file is downloaded  ${file name unzipped}
+
+    Extract file  ${file name unzipped}
+
+    Verify if a file is downloaded  ${file name renamed}
+
+    # XNT-81:Verify that the "upload_me.pdf" file is deleted in the server
+    Delete file  ${file name renamed}
+
+    Verify if file is not displayed in folder content  ${file name renamed}
+
+    # XNT-82:Verify that the "upload_me.pdf" file is uploaded from the client machine to the server
+    Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+    ...  Run Keywords
+
+    ...  Click folder link in side pane  ${upload folder name}
+
+    ...  AND  Click upload button
+
+    ...  AND  Upload file  ${file name renamed}
+
+    ...  AND  Verify if file is displayed in folder content  ${file name renamed}
+
+    ...  AND  Delete file  ${file name renamed}
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Select icon view mode in toolbar
+
+    ...         AND  Collapse folder in side pane  @{folder path}[0]
+
+    ...         AND  Delete download directory

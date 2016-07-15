@@ -1,0 +1,33 @@
+*** Settings ***
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Images  Files with XMP
+
+*** Test Cases ***
+XNT-47
+    [Documentation]  XNT-47:Verify that the 'no more items' message is displayed when the scroll down to the last
+    ...              of the images.
+
+    [Tags]  BVT  BareBones  Navigation  Marquee
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  @{folder path}[3]
+
+    Select short view mode in toolbar
+
+    Scroll down until page is loaded
+
+    Verify if no more items message is displayed
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Collapse folder in side pane  @{folder path}[0]

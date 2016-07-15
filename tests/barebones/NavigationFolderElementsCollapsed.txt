@@ -1,0 +1,26 @@
+*** Settings ***
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Audio
+
+*** Test Cases ***
+XNT-25
+    [Documentation]  XNT-25: Verify that after clicking up arrow all the subfolder and files are collapsed
+    ...              under the parent folder in side pane
+    [Tags]  DB  BareBones  Navigation  Marquee  Exhibit
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Collapse folder in side pane  @{folder path}[1]
+
+    Verify if folder content is not revealed under parent folder in side pane  ${folder path}  @{folder path}[1]
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Collapse folder in side pane  @{folder path}[0]

@@ -1,0 +1,31 @@
+*** Settings ***
+Documentation  Bare Bones Test Suite
+
+Library  DatabaseLibrary
+
+Library  ../../tests/steps/WebNativeVolumesUsersSteps.py
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/LoginSteps.py
+Library  ../../tests/steps/BasicToolsToolbarSteps.py
+Library  ../../tests/steps/PortalAdminAuthenticationSteps.py
+Library  ../../tests/steps/WebNativeDatabaseSteps.py
+Resource  ../../resources/commons/GlobalSettings.txt
+Resource  ../../resources/commons/Keywords.txt
+
+Suite Setup  Setup
+Suite Teardown  Teardown
+
+*** Keywords ***
+Setup
+    Delete screenshot directory
+    Delete download directory
+    Login to webnative  ${SERVER_IP}  ${WEBNATIVE_USER}  ${WEBNATIVE_PASSWORD}
+    Enable disable plugin item  Batch Report  ${XINET_USER}  on
+    Set default built in facets values
+    Add new site  ${PORTAL_IP}  ${PORTAL_ADMIN_PASSWORD}  ${SERVER_IP}  ${TEMPLATE}
+    Login to portal  ${PORTAL_IP}  ${SERVER_IP}  ${XINET_USER}  ${XINET_PASSWORD}
+
+Teardown
+    Login to webnative  ${SERVER_IP}  ${WEBNATIVE_USER}  ${WEBNATIVE_PASSWORD}
+    Enable disable plugin item  Batch Report  ${XINET_USER}  off
+    Logout from portal

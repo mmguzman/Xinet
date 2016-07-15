@@ -1,0 +1,7 @@
+#!/bin/bash
+
+Q1="GRANT ALL PRIVILEGES ON *.* TO 'root'@'131.106.110.%' IDENTIFIED BY 'xinetrlz' WITH GRANT OPTION;"
+Q2="FLUSH PRIVILEGES;"
+SQL="${Q1}${Q2}"
+
+/usr/etc/venture/bin/mysql -u root  -h 127.0.0.1 -e "$SQL"

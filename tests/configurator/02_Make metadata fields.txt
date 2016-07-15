@@ -1,0 +1,118 @@
+*** Settings ***
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativeDatabaseSteps.py
+Resource  ../../resources/commons/Keywords.txt
+
+*** Variables ***
+@{wnv_text} =  wnv_text  Text  ${false}  ${false}  ${None}  ${None}  ${None}  ${None}  ${None}  ${None}
+@{wnv_date} =  wnv_date  Date  ${false}  ${false}  ${None}  ${None}  ${None}  ${None}  ${None}  ${None}
+@{wnv_bool} =  wnv_bool  Boolean  ${false}  ${false}  ${None}  ${None}  ${None}  ${None}  ${None}  ${None}
+@{wnv_int} =  wnv_int  Integer  ${false}  ${false}  ${None}  ${None}  ${None}  ${None}  ${None}  ${None}
+@{wnv_float} =  wnv_float  Float  ${false}  ${false}  ${None}  ${None}  ${None}  ${None}  ${None}  ${None}
+@{wnv_text_xmp} =  wnv_text_xmp  Text  ${true}  ${false}  ${None}  ${None}  ${None}  ${None}  ${None}  ${None}
+@{wnv_text_popup} =  wnv_text_popup  Text  ${false}  ${false}  ${None}  ${wnv_text_popup_list}  ${true}  ${None}  ${None}  ${None}
+@{wnv_text_popup_list} =  apple  orange  kiwi
+@{wnv_text_popup_c_values} =  wnv_text_popup_c_values  Text  ${false}  ${false}  ${None}  ${wnv_text_popup_list_c_values}  ${false}  ${None}  ${None}  ${None}
+@{wnv_text_popup_list_c_values} =  ${empty}
+@{wnv_text_locked} =  wnv_text_locked  Text  ${false}  ${false}  ${None}  ${None}  ${None}  ${None}  ${None}  ${None}
+@{wnv_text_uploader_rq} =  wnv_text_uploader_rq  Text  ${false}  ${false}  ${None}  ${None}  ${None}  ${None}  ${None}  ${None}
+@{wnv_text_áccënt} =  wnv_text_áccënt  Text  ${false}  ${false}  ${None}  ${None}  ${None}  ${None}  ${None}  ${None}
+@{xwnv:USA_abbrev_mo} =  xwnv:USA_abbrev_mo  Date  ${true}  ${true}  ${None}  ${None}  ${None}  Jan 31, 2020  ${None}  ${None}
+@{xwnv:USA_num_12h} =  xwnv:USA_num_12h  Date  ${true}  ${true}  ${None}  ${None}  ${None}  1/31/2020 2:34:56 PM  ${None}  ${None}
+@{xwnv:EU_full_month} =  xwnv:EU_full_month  Date  ${true}  ${true}  ${None}  ${None}  ${None}  31 January 2020  ${None}  ${None}
+@{xwnv:EU_dmy_24h} =  xwnv:EU_dmy_24h  Date  ${true}  ${true}  ${None}  ${None}  ${None}  Friday 31/1/2020 14:34:56  ${None}  ${None}
+@{xwnv:Year_2digit} =  xwnv:Year_2digit  Date  ${true}  ${true}  ${None}  ${None}  ${None}  20/1/31  ${None}  ${None}
+@{xwnv:Year_4digit} =  xwnv:Year_4digit  Date  ${true}  ${true}  ${None}  ${None}  ${None}  2020/1/31  ${None}  ${None}
+@{xwnv:Dash_num_24h} =  xwnv:Dash_num_24h  Date  ${true}  ${true}  ${None}  ${None}  ${None}  2020-01-01 14:34:56  ${None}  ${None}
+@{xwnv:bucket_1_month} =  xwnv:bucket_1_month  Date  ${true}  ${true}  ${None}  ${None}  ${None}  ${None}  ${None}  ${None}
+@{xwnv:bucket_1_year} =  xwnv:bucket_1_year  Date  ${true}  ${true}  ${None}  ${None}  ${None}  ${None}  ${None}  ${None}
+@{xwnv:bucket_2_year} =  xwnv:bucket_2_year  Date  ${true}  ${true}  ${None}  ${None}  ${None}  ${None}  ${None}  ${None}
+@{xwnv:bucket_5_year} =  xwnv:bucket_5_year  Date  ${true}  ${true}  ${None}  ${None}  ${None}  ${None}  ${None}  ${None}
+@{xwnv:bucket_10_year} =  xwnv:bucket_10_year  Date  ${true}  ${true}  ${None}  ${None}  ${None}  ${None}  ${None}  ${None}
+@{xwnv:DateRange} =  xwnv:DateRange  Date  ${true}  ${true}  ${None}  ${None}  ${None}  ${None}  ${None}  ${None}
+@{xwnv:facet_big_int} =  xwnv:facet_big_int  Integer  ${true}  ${true}  ${xwnv:facet_big_int_list}  ${None}  ${None}  ${None}  BIGINT (8 bytes)  ${None}
+@{xwnv:facet_big_int_list} =  Range  auto mode
+@{xwnv:facet_int} =  xwnv:facet_int  Integer  ${true}  ${true}  ${xwnv:facet_int_list}  ${None}  ${None}  ${None}  INT (4 bytes)  ${None}
+@{xwnv:facet_int_list} =  Range  auto mode
+@{xwnv:facet_small_int} =  xwnv:facet_small_int  Integer  ${true}  ${true}  ${xwnv:facet_small_int_list}  ${None}  ${None}  ${None}  SMALLINT (2 bytes)  ${None}
+@{xwnv:facet_small_int_list} =  Range  auto mode
+@{xwnv:facet_tiny_int} =  xwnv:facet_tiny_int  Integer  ${true}  ${true}  ${xwnv:facet_tiny_int_list}  ${None}  ${None}  ${None}  TINYINT (1 byte)  ${None}
+@{xwnv:facet_tiny_int_list} =  Range  auto mode
+@{xwnv:facet_float_4dec} =  xwnv:facet_float_4dec  Float  ${true}  ${true}  ${xwnv:facet_float_4dec_list}  ${None}  ${None}  ${None}  ${None}  4
+@{xwnv:facet_float_4dec_list} =  Range  auto mode
+@{xwnv:facet_float_2dec} =  xwnv:facet_float_2dec  Float  ${true}  ${true}  ${xwnv:facet_float_2dec_list}  ${None}  ${None}  ${None}  ${None}  2
+@{xwnv:facet_float_2dec_list} =  Range  auto mode
+
+*** Test Cases ***
+XNT-10
+    [Documentation]  XNT-10: Make metadata fields
+    
+    [Tags]  Configurator
+    
+    Click database link
+    
+    Click data fields link
+
+    Update data field  Byline
+
+    Create new field  @{wnv_text}
+
+    Create new field  @{wnv_date}
+
+    Create new field  @{wnv_bool}
+
+    Create new field  @{wnv_int}
+
+    Create new field  @{wnv_float}
+
+    Create new field  @{wnv_text_xmp}
+
+    Create new field  @{wnv_text_popup}
+
+    Create new field  @{wnv_text_popup_c_values}
+
+    Create new field  @{wnv_text_locked}
+
+    Create new field  @{wnv_text_uploader_rq}
+
+    Create new field  @{wnv_text_áccënt}
+
+    Create new field  @{xwnv:USA_abbrev_mo}
+
+    Create new field  @{xwnv:USA_num_12h}
+
+    Create new field  @{xwnv:EU_full_month}
+
+    Create new field  @{xwnv:EU_dmy_24h}
+
+    Create new field  @{xwnv:Year_2digit}
+
+    Create new field  @{xwnv:Year_4digit}
+
+    Create new field  @{xwnv:Dash_num_24h}
+
+    Create new field  @{xwnv:bucket_1_month}
+
+    Create new field  @{xwnv:bucket_1_year}
+
+    Create new field  @{xwnv:bucket_2_year}
+
+    Create new field  @{xwnv:bucket_5_year}
+
+    Create new field  @{xwnv:bucket_10_year}
+
+    Create new field  @{xwnv:DateRange}
+
+    Create new field  @{xwnv:facet_big_int}
+
+    Create new field  @{xwnv:facet_int}
+
+    Create new field  @{xwnv:facet_small_int}
+
+    Create new field  @{xwnv:facet_tiny_int}
+
+    Create new field  @{xwnv:facet_float_4dec}
+
+    Create new field  @{xwnv:facet_float_2dec}
+    
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}

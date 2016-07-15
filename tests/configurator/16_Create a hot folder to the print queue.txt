@@ -1,0 +1,28 @@
+*** Settings ***
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativePrintHotFolderSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+${queue_name}  PDFImage
+
+*** Test Cases ***
+XNT-15
+    [Documentation]  XNT-15: Create a hot folder to the print queue
+    
+    [Tags]  Configurator
+    
+    Click print hot folder
+    
+    Click hot folders link
+    
+    #Verify if the hot folder is already created
+    ${hot folder already created}  Is hot folder displayed  ${SERVER_NAME}
+    
+    Create new hot folder  ${SERVER_NAME}  ${queue_name}
+    
+    #Verify if the hot folder was created correctly
+    Run Keyword unless  ${hot folder already created}  Verify if hot folder displayed  ${SERVER_NAME}
+    
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}

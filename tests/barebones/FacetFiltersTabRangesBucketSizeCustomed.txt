@@ -1,0 +1,70 @@
+*** Settings ***
+Library  ../../tests/steps/SidePaneFiltersSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/BasicToolsToolbarSteps.py
+Library  ../../tests/steps/WebNativeDatabaseSteps.py
+Library  ../../tests/steps/LoginSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{Integer files} =  -123456789.indd  -5486.indd  1456789123.indd  15486.indd  16.indd
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Facet-Numbers-Dates  Numbers  Integer
+@{integer} =  Integer  Range  auto mode
+@{metadata_list} =  ${integer}
+
+*** Test Cases ***
+XNT-74
+    [Documentation]  XNT-74: Verify if the filters tab displays the ranges according 
+    ...              to bucket sizes 1000 for facet_int.
+
+    [Tags]  BVT  BareBones  Exhibit  Marquee  Facet
+
+    Click logout link
+
+    Login to webnative  ${SERVER_IP}  ${WEBNATIVE_USER}  ${WEBNATIVE_PASSWORD}
+
+    Click database link
+
+    Click data fields link
+
+    Click edit fields link
+
+    Change facet type  Integer  Range  1000
+
+    #It is necessary to logout again to refresh the information set in Web Native about metadata.
+    Login to portal  ${PORTAL_IP}  ${SERVER_IP}  ${XINET_USER}  ${XINET_PASSWORD}
+
+    Click logout link
+
+    Login to portal  ${PORTAL_IP}  ${SERVER_IP}  ${XINET_USER}  ${XINET_PASSWORD}
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  @{folder path}[4]
+
+    Expand filters link in side pane
+
+    Expand folder for xwnvfacet  Integer
+
+    Verify if range is displayed in filters tab according to bucket size  1 - 1000
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...  AND  Collapse filters link in side pane
+
+    ...  AND  Click navigator link
+
+    ...  AND  Collapse folder in side pane  @{folder path}[0]
+
+    ...  AND  Login to webnative  ${SERVER_IP}  ${WEBNATIVE_USER}  ${WEBNATIVE_PASSWORD}
+
+    ...  AND  Click database link
+
+    ...  AND  Set default values facet  ${metadata_list}
+    
+    ...  AND  Login to portal  ${PORTAL_IP}  ${SERVER_IP}  ${XINET_USER}  ${XINET_PASSWORD}

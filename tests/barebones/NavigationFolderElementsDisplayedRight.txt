@@ -1,0 +1,35 @@
+*** Settings ***
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{arrow path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Audio
+${folder name}  Audio
+
+*** Test Cases ***
+XNT-21 XNT-22
+    [Documentation]  XNT-21: Verify that after clicking a folder all the folder content is displayed
+    ...              in folder content pane
+    ...
+    ...              XNT-22: Verify that after clicking a folder all the subfolders and files are revelead
+    ...              under the folder in side pane
+    [Tags]  BVT  DB  BareBones  Navigation  Marquee  Exhibit
+    
+    Select Volume  ${SERVER_NAME}_wnv
+
+    #Expand folder by path  Bare Bones Test Files
+    Expand folder by path in side pane  ${arrow path}
+
+    Click folder link in side pane  ${folder name}
+
+    Verify if folder content is displayed in folder content  ${folder path}  ${folder name}
+
+    Verify if folder content is not revealed under parent folder in side pane  ${folder path}  ${folder name}  #Files are not revealed under folder in SidePaneNavigator
+    
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Collapse folder in side pane  @{folder path}[0]

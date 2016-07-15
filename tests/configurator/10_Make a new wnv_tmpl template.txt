@@ -1,0 +1,72 @@
+*** Settings ***
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativeDatabaseSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+${template_name}  wnv_tmpl
+@{wnv_text} =  wnv_text  3
+@{wnv_date} =  wnv_date  3
+@{wnv_bool} =  wnv_bool  3
+@{wnv_int} =  wnv_int  3
+@{wnv_float} =  wnv_float  3
+@{wnv_text_xmp} =  wnv_text_xmp  3
+@{wnv_text_popup} =  wnv_text_popup  2
+@{wnv_text_popup_c_values} =  wnv_text_popup_c_values  2
+@{wnv_text_locked} =  wnv_text_locked  1
+@{wnv_text_uploader_rq} =  wnv_text_uploader_rq  3
+@{wnv_text_áccënt} =  wnv_text_áccënt  3
+@{usage_start_date} =  usage_start_date  3
+@{usage_end_date} =  usage_end_date  3
+@{Byline} =  Byline*  3
+@{xwnv:USA_abbrev_mo} =  xwnv:USA_abbrev_mo  3
+@{xwnv:USA_num_12h} =  xwnv:USA_num_12h  3
+@{xwnv:EU_full_month} =  xwnv:EU_full_month  3
+@{xwnv:EU_dmy_24h} =  xwnv:EU_dmy_24h  3
+@{xwnv:Year_2digit} =  xwnv:Year_2digit  3
+@{xwnv:Year_4digit} =  xwnv:Year_4digit  3
+@{xwnv:Dash_num_24h} =  xwnv:Dash_num_24h  3
+@{xwnv:bucket_1_month} =  xwnv:bucket_1_month  3
+@{xwnv:bucket_1_year} =  xwnv:bucket_1_year  3
+@{xwnv:bucket_2_year} =  xwnv:bucket_2_year  3
+@{xwnv:bucket_5_year} =  xwnv:bucket_5_year  3
+@{xwnv:bucket_10_year} =  xwnv:bucket_10_year  3
+@{xwnv:DateRange} =  xwnv:DateRange  3
+@{xwnv:facet_big_int} =  xwnv:facet_big_int  3
+@{xwnv:facet_int} =  xwnv:facet_int  3
+@{xwnv:facet_small_int} =  xwnv:facet_small_int  3
+@{xwnv:facet_tiny_int} =  xwnv:facet_tiny_int  3
+@{xwnv:facet_float_2dec} =  xwnv:facet_float_2dec  3
+@{xwnv:facet_float_4dec} =  xwnv:facet_float_4dec  3
+
+@{data_field_list} =  ${wnv_text}  ${wnv_date}  ${wnv_bool}  ${wnv_int}  ${wnv_float}
+...                   ${wnv_text_xmp}  ${wnv_text_popup}  ${wnv_text_popup_c_values}
+...                   ${wnv_text_locked}  ${wnv_text_uploader_rq}  ${wnv_text_áccënt}
+...                   ${usage_start_date}  ${usage_end_date}  ${Byline}  ${xwnv:USA_abbrev_mo}
+...                   ${xwnv:USA_num_12h}  ${xwnv:EU_full_month}  ${xwnv:EU_dmy_24h}
+...                   ${xwnv:Year_2digit}  ${xwnv:Year_4digit}  ${xwnv:Dash_num_24h}
+...                   ${xwnv:bucket_1_month}  ${xwnv:bucket_1_year}  ${xwnv:bucket_2_year}
+...                   ${xwnv:bucket_5_year}  ${xwnv:bucket_10_year}  ${xwnv:DateRange}
+...                   ${xwnv:facet_big_int}  ${xwnv:facet_int}  ${xwnv:facet_small_int}
+...                   ${xwnv:facet_tiny_int}  ${xwnv:facet_float_2dec}  ${xwnv:facet_float_4dec}
+
+*** Test Cases ***
+XNT-11
+    [Documentation]  XNT-11: Make a template
+    
+    [Tags]  Configurator
+    
+    Click database link
+    
+    Click templates link
+    
+    #Verify if the template is already created
+    ${template already created}  Is template displayed combo  ${template_name}
+    
+    Add new template  ${template_name}  ${data_field_list}
+    
+    #Verify if the template was created correctly
+    Run Keyword unless  ${template already created}  Verify message displayed  Template ${template_name} successfully updated.
+    
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}

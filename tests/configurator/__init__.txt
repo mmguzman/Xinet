@@ -1,0 +1,19 @@
+*** Settings ***
+Documentation  Configurator Test Suite
+
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Resource  ../../resources/commons/GlobalSettings.txt
+Resource  ../../resources/commons/Keywords.txt
+
+Suite Setup  Setup
+Suite Teardown  Teardown
+
+*** Keywords ***
+Setup
+    Clear browsing data
+    Delete screenshot directory
+    Login to webnative  ${SERVER_IP}  ${WEBNATIVE_USER}  ${WEBNATIVE_PASSWORD}
+    Select language encoding  ${LANGUAGE_TYPE}
+
+Teardown
+    Close browser

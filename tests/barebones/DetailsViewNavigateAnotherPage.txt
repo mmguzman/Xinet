@@ -1,0 +1,71 @@
+*** Settings ***
+Library  ../../tests/steps/BreadcrumbsNavigatorSteps.py
+Library  ../../tests/steps/FileContentModalSteps.py
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneFiltersSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  InDesign Job  Abercrombie&Kent
+${file name}  abercrombie&kent_CC.indd
+${selected navigation page} =  4
+${navigation page default} =  1
+${expected page}  1 / 10
+
+*** Test Cases ***
+XNT-102
+    [Documentation]  XNT-102:Verify if the pages tab allows to navigate to another page in the document.
+
+    [Tags]  BVT  BareBones  DetailsView  Marquee  Exhibit
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  @{folder path}[3]
+
+    Click view file  ${file name}
+
+    Click pages tab
+
+    Click page number image  ${selected navigation page}  ${file name}
+
+    Verify if selected page is loaded in file content modal  ${selected navigation page}
+
+    Click back to file content modal button
+
+    Click pages tab
+
+    Select default page in pages tab  ${navigation page default}
+
+    Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+    ...  Run Keywords  Click close file content modal
+
+    ...  AND  Select short view mode in toolbar
+
+    ...  AND  Select actions button in toolbar
+
+    ...  AND  Click show annotations icon  ${file name}
+
+    ...  ELSE
+
+    ...  Run Keywords  Click save all button
+
+    Verify if selected page is displayed in folder content  ${expected page}
+
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}
+
+                Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+                ...  Click x button in file content modal
+
+                ...  ELSE
+
+                ...  Click folder link in breadcrumbs  @{folder path}[3]
+
+                Run Keyword  Collapse folder in side pane  @{folder path}[0]

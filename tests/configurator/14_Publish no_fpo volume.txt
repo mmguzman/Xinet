@@ -1,0 +1,27 @@
+*** Settings ***
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativeVolumesUsersSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Test Cases ***
+XNT-9
+    [Documentation]  XNT-9: Publish the "no_fpo" volume for wnv
+    
+    [Tags]  Configurator
+
+    Click volumes users link
+    
+    Click user volumes link
+    
+    Click summary link
+    
+    #Verify if the user volume is already published
+    ${user volume already created}  Is user volume displayed  ${XINET_USER}  ${SERVER_NAME}_no_fpo
+    
+    Add new user volume  ${XINET_USER}  ${SERVER_NAME}_no_fpo
+    
+    #Verify if the user volume was published correctly
+    Run Keyword unless  ${user volume already created}  Verify user volume displayed  ${XINET_USER}  ${SERVER_NAME}_no_fpo
+
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}

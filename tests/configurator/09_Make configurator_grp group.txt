@@ -1,0 +1,28 @@
+*** Settings ***
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativeVolumesUsersSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+${group name}  configurator_grp
+
+*** Test Cases ***
+XNT-7
+    [Documentation]  XNT-7: Make a 'configurator_grp' group and add 'wnv' user
+    
+    [Tags]  Configurator
+
+    Click volumes users link
+    
+    Click groups link
+    
+    #Verify if the group item is already created
+    ${group already created}  Is item displayed in combo  ${group name}
+    
+    Add new group  ${group name}  ${XINET_USER}
+    
+    #Verify if the group was created correctly
+    Run Keyword unless  ${group already created}  Verify message displayed  Group ${group name} successfully added
+
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}

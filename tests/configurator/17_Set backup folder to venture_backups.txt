@@ -1,0 +1,25 @@
+*** Settings ***
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativeDatabaseSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Test Cases ***
+XNT-16
+    [Documentation]  XNT-16: Set the backups folder to 'venture_backups' in the volume root
+    
+    [Tags]  Configurator
+    
+    Click database link
+    
+    Click backup link
+    
+    #Verify if the DB Backup is already created
+    ${backup already created}  Is db backup displayed  ${SERVER_NAME}
+    
+    Set backup folder to venture backups  ${SERVER_NAME}
+    
+    #Verify if the Backup was created correctly
+    Run Keyword unless  ${backup already created}  Verify if db backup is displayed  ${SERVER_NAME}
+    
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}

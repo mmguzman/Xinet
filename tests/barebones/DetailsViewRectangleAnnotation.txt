@@ -1,0 +1,80 @@
+*** Settings ***
+Library  ../../tests/steps/BreadcrumbsNavigatorSteps.py
+Library  ../../tests/steps/FileContentModalSteps.py
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneFiltersSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Images
+${folder name}  FPO File Formats
+${file to copy} =  Dalim LW
+@{annotation_item}=  rectangle
+${note} =  Rectangle annotation
+@{expected_result}=  Gorilla5  1
+
+*** Test Cases ***
+XNT-93
+    [Documentation]  XNT-93:Verify that it is possible to add a rectangle annotation with notes: Gorilla5
+
+    [Tags]  BVT  BareBones  DetailsView  Marquee  Exhibit
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${folder path}
+
+    Click folder link in side pane  ${folder name}
+
+    Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+    ...  Select list view mode in toolbar
+
+    ...  ELSE
+
+    ...  Select short view mode in toolbar
+
+    ${new file name} =  Generate random file name
+
+    Copy file folder content  ${file to copy}  ${new file name}
+
+    Wait until file is copied  ${new file name}
+
+    Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+    ...  Run Keywords  Select short view mode in toolbar
+
+    ...  AND  Select actions button in toolbar
+
+    Click show annotations icon  ${new file name}
+
+    Create annotation  ${note}  ${annotation_item}
+
+    Click show annotations button
+
+    Click right arrow in file content modal
+
+    Run Keyword And Continue On Failure  Verify if annotation item is displayed on canvas  ${expected_result}
+
+    Verify if annotation item is displayed in annotation_list  ${expected_result}
+
+    [Teardown]  Run Keyword  Take Screenshot If Test Fails  ${TEST NAME}
+
+                Run Keyword If  '${TEMPLATE}' == 'marquee'
+
+                ...  Run Keywords  Click back to file content modal button
+
+                ...  AND  Click close file content modal
+
+                ...  AND  Select list view mode in toolbar
+
+                ...  ELSE
+
+                ...  Click folder link in breadcrumbs  ${folder name}
+
+                Run Keywords  Delete file  ${new file name}
+
+                ...  AND  Collapse folder in side pane  @{folder path}[0]

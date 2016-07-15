@@ -1,0 +1,43 @@
+*** Settings ***
+Library  ../../tests/steps/FolderContentSteps.py
+Library  ../../tests/steps/FileActionsToolbarSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Library  ../../tests/steps/FileContentModalSteps.py
+Library  ../../tests/steps/BreadcrumbsNavigatorSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Videos
+${video name} =  tkt_flintstones.mov
+
+*** Test Cases ***
+XNT-76
+    [Documentation]  XNT-76: Verify that the selected video is displayed when clicking Preview Generation 
+
+    [Tags]  BVT  BareBones  Marquee  Exhibit  Video
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Scroll and expand folder by path  ${folder path}
+
+    Click folder link in side pane  @{folder path}[2]
+
+    Click view video file  ${video name}
+    
+    Play video
+    
+    Verify if the selected video is reproduced
+
+    Run Keyword If  '${template}' == 'marquee'
+    
+    ...  Click close file content modal
+
+    ...  ELSE
+
+    ...  Click folder link in breadcrumbs  @{folder path}[2]
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...         AND  Back to home

@@ -1,0 +1,85 @@
+*** Settings ***
+Library  ../../tests/steps/BasicToolsToolbarSteps.py
+Library  ../../tests/steps/WebNativeHomeSteps.py
+Library  ../../tests/steps/WebNativeDatabaseSteps.py
+Library  ../../tests/steps/LoginSteps.py
+Library  ../../tests/steps/HomeSteps.py
+Library  ../../tests/steps/SidePaneNavigatorSteps.py
+Library  ../../tests/steps/SidePaneFiltersSteps.py
+Resource  ../../resources/commons/Keywords.txt
+Resource  ../../resources/commons/GlobalSettings.txt
+
+*** Variables ***
+@{Integer files} =  -123456789.indd  -5486.indd  16.indd  15486.indd  1456789123.indd
+@{float-2dec files} =  -3.04.indd  -.07.indd  0.01.indd  1.36.indd  2.12.indd
+@{integer folder path} =  ${SERVER_NAME}_wnv  2015 Bare Bones Test Files  Facet-Numbers-Dates  Numbers  Integer
+@{integer} =  Integer  Range  auto mode
+@{float} =  Float-2dec  Range  auto mode
+@{metadata_list} =  ${integer}  ${float}
+
+*** Test Cases ***
+XNT-72
+    [Documentation]  XNT-72: Verify if individual values are displayed in the filters 
+    ...              when setting facet type as Values.
+
+    [Tags]  BVT  BareBones  Exhibit  Marquee  Facet
+    
+    Click logout link
+
+    Login to webnative  ${SERVER_IP}  ${WEBNATIVE_USER}  ${WEBNATIVE_PASSWORD}
+
+    Click database link
+
+    Click data fields link
+
+    Click edit fields link
+
+    # Set the facet type = 'Value' in Xinet Webnative page for Integer and Float-2dec.
+    Change facet type  Integer  Value
+
+    Change facet type  Float-2dec  Value
+
+    # Login to portal to verify that there is one range for file list according to the integer fields selected.
+    Login to portal  ${PORTAL_IP}  ${SERVER_IP}  ${XINET_USER}  ${XINET_PASSWORD}
+
+    Select Volume  ${SERVER_NAME}_wnv
+
+    Expand folder by path in side pane  ${integer folder path}
+
+    # Verify that there is one range for file list when clicking Integer folder in Side Pane Navigator.
+    Click folder link in side pane  Integer
+
+    Expand filters link in side pane
+
+    Expand folder for xwnvfacet  Integer
+
+    Run Keyword And Continue On Failure  Verify that there is one range for file list  ${Integer files}
+
+    Collapse filters link in side pane
+
+    Click navigator link
+
+    # Verify that there is one range for file list when clicking Float-2dec folder in Side Pane Navigator.
+    Click folder link in side pane  Float-2dec
+
+    Expand filters link in side pane
+
+    Expand folder for xwnvfacet  Float-2dec
+
+    Verify that there is one range for file list  ${float-2dec files}
+
+    [Teardown]  Run Keywords  Take Screenshot If Test Fails  ${TEST NAME}
+
+    ...  AND  Collapse_filters_link_in_side_pane
+
+    ...  AND  Click navigator link
+
+    ...  AND  Collapse folder in side pane  @{integer folder path}[0]
+
+    ...  AND  Login to webnative  ${SERVER_IP}  ${WEBNATIVE_USER}  ${WEBNATIVE_PASSWORD}
+
+    ...  AND  Click database link
+
+    ...  AND  Set default values facet  ${metadata_list}
+
+    ...  AND  Login to portal  ${PORTAL_IP}  ${SERVER_IP}  ${XINET_USER}  ${XINET_PASSWORD}
